@@ -14,6 +14,7 @@ import java.util.Scanner;
  * @author Roy Smart
  */
 public class EditDistance {
+
     Node[][] table;
     int length1;
     int length2;
@@ -21,49 +22,62 @@ public class EditDistance {
     EditDistance(String inputFile) throws FileNotFoundException {
         in = new Scanner(new File(inputFile));
     }
-    
-    public void calculateDistance(){
-        while(in.hasNext()){
+
+    public void calculateDistance() {
+        while (in.hasNext()) {
             char[] string1 = (" " + in.nextLine()).toCharArray();   // add emptystring to beginning
             char[] string2 = (" " + in.nextLine()).toCharArray();
-            
+
             length1 = string1.length;
             length2 = string2.length;
             table = new Node[length1][length2];
-            
+
             /*initialize table*/
-            for(int i = 0; i < length1; i++){
+            for (int i = 0; i < length1; i++) {
                 table[i][0] = new Node(i, 0);
             }
-            for(int j = 0; j < length2; j++){
-                table[0][j] = new Node(0, j);
+            for (int j = 0; j < length2; j++) {
+                table[0][j] = new Node(j, 0);
             }
-            
+
             Node addNode;
             Node delNode;
             Node subNode;
             /*find best alignment*/
-            for(int i = 0; i < length1; i++){
-                for (int j = 0; j < length2; j++){
-                    addNode = new Node(table[i-1][j].value + 1, 1);
-                    delNode = new Node(table[i][j-1].value + 1, 2);
-                    subNode = new Node(table[i-1][j-1].value + 1, 3);
-                    
-                    table[i][j] = addNode;
-                    if(addNode.compareTo(delNode) < 0){
-                        table[i][j] = delNode;
+            for (int i = 1; i < length1; i++) {
+                for (int j = 1; j < length2; j++) {
+                    if (string1[i] == string2[j]) {
+                        addNode = new Node(table[i - 1][j].value, 1);
+                        delNode = new Node(table[i][j - 1].value, 2);
+                        subNode = new Node(table[i - 1][j - 1].value, 3);
+
+                        table[i][j] = addNode;
+                        if (addNode.compareTo(delNode) > 0) {
+                            table[i][j] = delNode;
+                        }
+                        if (table[i][j].compareTo(subNode) > 0) {
+                            table[i][j] = subNode;
+                        }
                     }
-                    if(delNode.compareTo(subNode) < 0){
-                        table[i][j] = subNode;
+                    else{
+                        addNode = new Node(table[i - 1][j].value + 1, 1);
+                        delNode = new Node(table[i][j - 1].value + 1, 2);
+                        subNode = new Node(table[i - 1][j - 1].value + 1, 3);
+
+                        table[i][j] = addNode;
+                        if (addNode.compareTo(delNode) > 0) {
+                            table[i][j] = delNode;
+                        }
+                        if (table[i][j].compareTo(subNode) > 0) {
+                            table[i][j] = subNode;
+                        }
                     }
                 }
             }
             printTable();
         }
     }
-    
-    
-    
+
     public void initialize() {
         int numberCoins;
         int maxChange;
@@ -99,7 +113,7 @@ public class EditDistance {
         System.out.println("Table");
         for (int i = 0; i < length1; i++) {
             for (int j = 0; j < length2; j++) {
-                System.out.print(table[i][j] + " ");
+                System.out.print(table[i][j].value + " ");
             }
             System.out.println();
         }
@@ -131,7 +145,6 @@ public class EditDistance {
                     + changeAmount + " is " + solutions[changeAmount][coins.length - 1]);
         }
     }
-
     private int coins[];
     private int solutions[][];
     private Scanner in;
