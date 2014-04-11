@@ -21,6 +21,6 @@ public class Node implements Comparable<Node>{
     
     @Override
     public int compareTo(Node node){
-        return Integer.compare(value, node.value);        
+        return Integer.compare(value, node.value);     
     }
 }

@@ -14,6 +14,9 @@ import java.util.Scanner;
  * @author Roy Smart
  */
 public class EditDistance {
+    Node[][] table;
+    int length1;
+    int length2;
 
     EditDistance(String inputFile) throws FileNotFoundException {
         in = new Scanner(new File(inputFile));
@@ -23,21 +26,43 @@ public class EditDistance {
         while(in.hasNext()){
             char[] string1 = (" " + in.nextLine()).toCharArray();   // add emptystring to beginning
             char[] string2 = (" " + in.nextLine()).toCharArray();
-            in.nextLine();  //read over empty line in input file
             
-            int length1 = string1.length;
-            int length2 = string2.length;
-            Node[][] distanceTable = new Node[length1][length2];
+            length1 = string1.length;
+            length2 = string2.length;
+            table = new Node[length1][length2];
             
+            /*initialize table*/
             for(int i = 0; i < length1; i++){
-                distanceTable[i][0] = new Node(i, 0);
+                table[i][0] = new Node(i, 0);
             }
             for(int j = 0; j < length2; j++){
-                distanceTable[0][j] = new Node(0, j);
+                table[0][j] = new Node(0, j);
             }
             
+            Node addNode;
+            Node delNode;
+            Node subNode;
+            /*find best alignment*/
+            for(int i = 0; i < length1; i++){
+                for (int j = 0; j < length2; j++){
+                    addNode = new Node(table[i-1][j].value + 1, 1);
+                    delNode = new Node(table[i][j-1].value + 1, 2);
+                    subNode = new Node(table[i-1][j-1].value + 1, 3);
+                    
+                    table[i][j] = addNode;
+                    if(addNode.compareTo(delNode) < 0){
+                        table[i][j] = delNode;
+                    }
+                    if(delNode.compareTo(subNode) < 0){
+                        table[i][j] = subNode;
+                    }
+                }
+            }
+            printTable();
         }
     }
+    
+    
     
     public void initialize() {
         int numberCoins;
@@ -72,9 +97,9 @@ public class EditDistance {
 
     private void printTable() {
         System.out.println("Table");
-        for (int i = 0; i < solutions.length; i++) {
-            for (int j = 0; j < coins.length; j++) {
-                System.out.print(solutions[i][j] + " ");
+        for (int i = 0; i < length1; i++) {
+            for (int j = 0; j < length2; j++) {
+                System.out.print(table[i][j] + " ");
             }
             System.out.println();
         }

@@ -12,9 +12,10 @@ public class Driver
 {
     public static void main (String [] args) throws FileNotFoundException
     {
-        EditDistance coins = new EditDistance ("words.txt");
-        coins.initialize();
-        coins.fillTable();
-        coins.solveProblems();
+        EditDistance words = new EditDistance ("words.txt");
+        words.calculateDistance();
+        //coins.initialize();
+        //coins.fillTable();
+        //coins.solveProblems();
     }
 }
